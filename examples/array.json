@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "ArrayTest",
+  "type": "object",
+  "properties": {
+    "example": {
+      "type": "array",
+      "items": [
+        { "type": "string" },
+        { "type": "integer" }
+      ],
+      "minItems": 2,
+      "maxItems": 2,
+      "additionalItems": false
+    }
+  }
+}

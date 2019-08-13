@@ -1,0 +1,61 @@
+{
+  "name": "svarog",
+  "description": "Generates Cloud Firestore helper functions for schema validation using JSON Schema.",
+  "version": "0.3.0",
+  "author": "Daniil Bratukhin <dantothefuture@gmail.com>",
+  "bin": {
+    "svarog": "./bin/run"
+  },
+  "bugs": "https://github.com/dantothefuture/svarog/issues",
+  "dependencies": {
+    "@oclif/command": "^1.5.18",
+    "@oclif/config": "^1.13.2",
+    "@oclif/plugin-help": "^2.2.0",
+    "glob": "^7.1.4",
+    "tslib": "^1.10.0"
+  },
+  "devDependencies": {
+    "@oclif/test": "^1.2.5",
+    "@types/chai": "^4.2.0",
+    "@types/glob": "^7.1.1",
+    "@types/json-schema": "^7.0.3",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^10.14.15",
+    "chai": "^4.2.0",
+    "cz-conventional-changelog": "^3.0.2",
+    "mocha": "^5.2.0",
+    "nyc": "^14.1.1",
+    "prettier": "1.18.2",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.5.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib"
+  ],
+  "homepage": "https://github.com/dantothefuture/svarog",
+  "keywords": [],
+  "license": "MIT",
+  "main": "index.js",
+  "oclif": {
+    "bin": "svarog"
+  },
+  "repository": "https://github.com/dantothefuture/svarog",
+  "scripts": {
+    "format": "tslint -c tslint.json 'src/**/*.ts' --fix && prettier --write 'src/**/*.ts'",
+    "posttest": "tslint -p test -t stylish",
+    "prepack": "rm -rf lib && tsc -b",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\""
+  },
+  "types": "lib/index.d.ts",
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

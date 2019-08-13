@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "OptionalTest",
+  "type": "object",
+  "properties": {
+    "optional": {
+      "type": "null"
+    },
+    "required": {
+      "type": "null"
+    }
+  },
+  "required": [
+    "required"
+  ]
+}
