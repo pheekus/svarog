@@ -12,6 +12,7 @@ import {
 
 export default function(
   accessor: CELAccessor,
+  strict: CELAccessor,
   type: JSONSchema7TypeName,
   definition: JSONSchema7
 ): CELExpression | null {

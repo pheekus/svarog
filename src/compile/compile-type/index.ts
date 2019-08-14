@@ -26,8 +26,9 @@ const compilers = [
 
 export default function(
   accessor: CELAccessor,
+  strict: CELAccessor,
   definition: JSONSchema7,
-  isRequired: boolean
+  isRequired: boolean | null
 ): CELExpressionOperand {
   const expression = new CELExpression([], CELOperators.OR);
   const types = Array.isArray(definition.type)
@@ -36,12 +37,24 @@ export default function(
 
   for (const typeName of types) {
     for (const compiler of compilers) {
-      const celOrNull = compiler(accessor, typeName, definition);
+      const celOrNull = compiler(accessor, strict, typeName, definition);
       if (celOrNull) expression.operands.push(celOrNull);
     }
   }
 
-  if (isRequired) return expression;
+  // REQUIRED => accessor || strict ? isPropValid : true
+  // OPTIONAL => accessor ? isPropValid : true
 
-  return new CELCondition(accessor, expression, new CELLiteral(true));
+  if (isRequired === null) {
+    return expression;
+  } else {
+    return new CELCondition(
+      new CELExpression(
+        isRequired ? [ accessor, strict ] : [ accessor ],
+        CELOperators.OR
+      ),
+      expression,
+      new CELLiteral(true)
+    );
+  }
 }

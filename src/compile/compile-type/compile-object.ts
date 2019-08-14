@@ -10,6 +10,7 @@ import compileType from './index';
 
 export default function(
   accessor: CELAccessor,
+  strict: CELAccessor,
   type: JSONSchema7TypeName,
   definition: JSONSchema7
 ): CELExpression | null {
@@ -22,6 +23,7 @@ export default function(
   ).map((property: string) =>
     compileType(
       new CELAccessor(...accessor.path, property),
+      strict,
       (definition.properties as any)[property] as JSONSchema7,
       required.includes(property)
     )

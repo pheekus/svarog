@@ -1,13 +1,14 @@
+import CELAccessor from './accessor';
 import { CELExpressionOperand } from './types';
 
 export default class CELFunction {
   public name: string;
-  public params: string[];
+  public params: CELAccessor[];
   public expression: CELExpressionOperand;
 
   constructor(
     name: string,
-    params: string[],
+    params: CELAccessor[],
     expression: CELExpressionOperand
   ) {
     this.name = name;
@@ -16,7 +17,7 @@ export default class CELFunction {
   }
 
   public compile(): string {
-    const params = this.params.join(', ');
+    const params = this.params.map((v) => v.compile()).join(', ');
     const signature = `function ${this.name}(${params})`;
     const body = `return ${this.expression.compile()};`;
 
