@@ -76,7 +76,9 @@ class Svarog extends Command {
       this.log(`Found ${files.length} file${files.length > 1 ? 's' : ''}`);
     }
 
-    const results: string[] = [];
+    const results: string[] = [
+      `// <svarog version="${packageVersion}">\n`
+    ];
 
     for (const file of files) {
       if (isVerbose) this.log(`Processing ${file}`);
@@ -88,6 +90,8 @@ class Svarog extends Command {
 
       results.push(result);
     }
+
+    results.push('\n// </svarog>')
 
     const rules = results.join('');
 
