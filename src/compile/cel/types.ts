@@ -18,6 +18,7 @@ export enum CELOperators {
   AND = '&&',
   OR = '||',
   IS = 'is',
+  IN = 'in',
   EQUALS = '==',
   GREATER = '>',
   LESS = '<',

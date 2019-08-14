@@ -13,7 +13,7 @@ export default class CELFunctionCall {
   }
 
   public compile(): string {
-    const parameters = this.parameters.map(v => v.compile()).join(', ');
+    const parameters = this.parameters.map(v => v.compile()).join(',');
     return `${this.accessor.compile()}(${parameters})`;
   }
 }

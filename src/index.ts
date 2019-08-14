@@ -89,7 +89,7 @@ class Svarog extends Command {
       results.push(result);
     }
 
-    const rules = results.join('\n\n');
+    const rules = results.join('');
 
     if (output) {
       if (isVerbose) this.log(`Saving to ${output}`);
