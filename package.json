@@ -1,7 +1,7 @@
 {
   "name": "svarog",
   "description": "Generates Cloud Firestore helper functions for schema validation using JSON Schema.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": "Daniil Bratukhin <dantothefuture@gmail.com>",
   "bin": {
     "svarog": "./bin/run"
