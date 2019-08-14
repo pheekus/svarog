@@ -1,6 +1,7 @@
 import { Command, flags } from '@oclif/command';
 import fs from 'fs';
 import glob from 'glob';
+import outdent from 'outdent';
 import { promisify } from 'util';
 import {
   description as packageDescription,
@@ -15,7 +16,7 @@ class Svarog extends Command {
     force: flags.boolean({
       char: 'f',
       default: false,
-      description: 'overwrites the output file if it exists'
+      description: 'overwrites existing Svarog code unconditionally'
     }),
     help: flags.help({
       char: 'h',
@@ -49,24 +50,10 @@ class Svarog extends Command {
     const output = command.args.output;
     const isVerbose = command.flags.verbose;
     const isOverwriteAllowed = command.flags.force;
-
-    if (output && !isOverwriteAllowed && (await promisify(fs.exists)(output))) {
-      this.error(
-        `Output file ${output} already exists. If you'd like to overwrite it, please use --force next time you run Svarog.`
-      );
-    }
+    const isOutputEmpty = !(await promisify(fs.exists)(output))
 
     if (isVerbose) {
       this.log(`Svarog v${packageVersion}`);
-
-      if (
-        output &&
-        isOverwriteAllowed &&
-        (await promisify(fs.exists)(output))
-      ) {
-        this.warn(`Using --force flag to overwrite the contents of ${output}`);
-      }
-
       this.log(`Resolving paths for ${input}`);
     }
 
@@ -95,9 +82,37 @@ class Svarog extends Command {
 
     const rules = results.join('');
 
-    if (output) {
-      if (isVerbose) this.log(`Saving to ${output}`);
+    if (output && isOutputEmpty) {
+      if (isVerbose) this.log(`Creating ${output}`);
       await promisify(fs.writeFile)(output, rules);
+
+    } else if (output && !isOutputEmpty) {
+      const outputContent = await promisify(fs.readFile)(output, { encoding: 'utf-8' });
+      const svarogRegex = /\/\/\s<svarog version="(\d)\.(\d)\.(\d)">\n(.*)\n\/\/\s<\/svarog>/gm;
+      const svarogInfo = svarogRegex.exec(outputContent);
+
+      if (svarogInfo === null) {
+        if (isVerbose) this.log(`Appending Svarog to ${output}`);
+        await promisify(fs.writeFile)(output, `${outputContent}\n\n${rules}`);
+      } else {
+        const oldVersion = svarogInfo.slice(1, 4).join('.')
+        const oldMajorVersion = parseInt(svarogInfo[1], 10);
+        const newMajorVersion = parseInt(packageVersion.split('.')[0], 10);
+        const canOverwrite = (oldVersion === packageVersion) || (oldMajorVersion === newMajorVersion && oldMajorVersion > 0);
+
+        if (canOverwrite || isOverwriteAllowed) {
+          if (isVerbose) this.log(`Updating Svarog in ${output}`);
+
+          const newContent = outputContent.replace(svarogInfo[0], rules);
+          await promisify(fs.writeFile)(output, newContent);
+        } else {
+          this.error(outdent`
+            Output file contains a different major or pre-release version of Svarog,
+            and replacing it might break your configuration. If you know what you're doing,
+            please use --force flag next time.
+          `)
+        }
+      }
     } else {
       this.log(rules);
     }

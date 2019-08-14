@@ -84,7 +84,7 @@ ARGUMENTS
   OUTPUT  target file where Svarog will output security rule helpers
 
 OPTIONS
-  -f, --force    overwrites the output file if it exists
+  -f, --force    overwrites existing Svarog code unconditionally
   -h, --help     displays this message
   -v, --verbose  enables progress logs during compilation
 ```

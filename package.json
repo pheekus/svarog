@@ -12,6 +12,7 @@
     "@oclif/config": "^1.13.2",
     "@oclif/plugin-help": "^2.2.0",
     "glob": "^7.1.4",
+    "outdent": "^0.7.0",
     "tslib": "^1.10.0"
   },
   "devDependencies": {
