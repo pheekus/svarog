@@ -4,7 +4,9 @@ import {
   CELExpression,
   CELExpressionOperand,
   CELLiteral,
-  CELOperators
+  CELOperators,
+  CELFunctionCall,
+  CELList
 } from '../cel';
 import compileType from './index';
 
@@ -29,9 +31,21 @@ export default function(
     )
   );
 
-  if (operands.length === 0) {
-    operands.push(new CELLiteral(true));
-  }
+  // => accessor.keys().hasOnly(allowedKeys)
+
+  const allowedKeys = Object.keys(definition.properties as any).map((v) => new CELLiteral(v));
+
+  operands.unshift(
+    new CELFunctionCall(
+      new CELAccessor(
+        new CELFunctionCall(
+          new CELAccessor(...accessor.path, 'keys')
+        ),
+        'hasOnly'
+      ),
+      new CELList(...allowedKeys)
+    )
+  );
 
   return new CELExpression(operands, CELOperators.AND);
 }

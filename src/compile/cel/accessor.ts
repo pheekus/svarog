@@ -1,8 +1,12 @@
+import { CELFunctionCall } from '.';
+
+type CELAccessorPath = string | CELFunctionCall;
+
 export default class CELAccessor {
-  public path: string[] = [];
+  public path: CELAccessorPath[] = [];
   public readonly isSimple: boolean = true;
 
-  constructor(...path: string[]) {
+  constructor(...path: CELAccessorPath[]) {
     this.path = path;
   }
 
@@ -10,9 +14,10 @@ export default class CELAccessor {
     let result = '';
 
     this.path.forEach(key => {
-      if (result !== '' && key[0] !== '[' && key[key.length - 1] !== ']')
+      const compiledKey = typeof key === 'string' ? key : key.compile();
+      if (result !== '' && compiledKey[0] !== '[' && compiledKey[compiledKey.length - 1] !== ']')
         result += '.';
-      result += key;
+      result += compiledKey;
     });
 
     return result;
