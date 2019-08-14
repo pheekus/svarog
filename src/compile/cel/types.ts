@@ -10,7 +10,7 @@ export enum CELGlobals {
   STRING = 'string',
   BOOLEAN = 'bool',
   INTEGER = 'int',
-  FLOAT = 'double',
+  FLOAT = 'float',
   LIST = 'list'
 }
 
