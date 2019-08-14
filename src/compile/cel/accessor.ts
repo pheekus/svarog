@@ -15,7 +15,11 @@ export default class CELAccessor {
 
     this.path.forEach(key => {
       const compiledKey = typeof key === 'string' ? key : key.compile();
-      if (result !== '' && compiledKey[0] !== '[' && compiledKey[compiledKey.length - 1] !== ']')
+      if (
+        result !== '' &&
+        compiledKey[0] !== '[' &&
+        compiledKey[compiledKey.length - 1] !== ']'
+      )
         result += '.';
       result += compiledKey;
     });

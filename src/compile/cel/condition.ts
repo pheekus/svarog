@@ -1,4 +1,9 @@
-import { CELExpressionOperand, CELLiteral, CELExpression, CELOperators } from '.';
+import {
+  CELExpression,
+  CELExpressionOperand,
+  CELLiteral,
+  CELOperators
+} from '.';
 
 export default class CELCondition {
   public readonly isSimple = false;
@@ -18,9 +23,12 @@ export default class CELCondition {
   }
 
   public compile(): string {
-    return new CELExpression([
-      new CELExpression([ this.expression, this.onTrue ], CELOperators.AND),
-      this.onFalse
-    ], CELOperators.OR).compile();
+    return new CELExpression(
+      [
+        new CELExpression([this.expression, this.onTrue], CELOperators.AND),
+        this.onFalse
+      ],
+      CELOperators.OR
+    ).compile();
   }
 }

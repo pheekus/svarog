@@ -50,7 +50,7 @@ export default function(
   } else {
     return new CELCondition(
       new CELExpression(
-        isRequired ? [ accessor, strict ] : [ accessor ],
+        isRequired ? [accessor, strict] : [accessor],
         CELOperators.OR
       ),
       expression,

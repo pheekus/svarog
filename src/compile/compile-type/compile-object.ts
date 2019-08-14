@@ -3,10 +3,10 @@ import {
   CELAccessor,
   CELExpression,
   CELExpressionOperand,
-  CELLiteral,
-  CELOperators,
   CELFunctionCall,
-  CELList
+  CELList,
+  CELLiteral,
+  CELOperators
 } from '../cel';
 import compileType from './index';
 
@@ -33,14 +33,14 @@ export default function(
 
   // => accessor.keys().hasOnly(allowedKeys)
 
-  const allowedKeys = Object.keys(definition.properties as any).map((v) => new CELLiteral(v));
+  const allowedKeys = Object.keys(definition.properties as any).map(
+    v => new CELLiteral(v)
+  );
 
   operands.unshift(
     new CELFunctionCall(
       new CELAccessor(
-        new CELFunctionCall(
-          new CELAccessor(...accessor.path, 'keys')
-        ),
+        new CELFunctionCall(new CELAccessor(...accessor.path, 'keys')),
         'hasOnly'
       ),
       new CELList(...allowedKeys)

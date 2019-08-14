@@ -17,7 +17,7 @@ export default class CELFunction {
   }
 
   public compile(): string {
-    const params = this.params.map((v) => v.compile()).join(',');
+    const params = this.params.map(v => v.compile()).join(',');
     const signature = `function ${this.name}(${params})`;
     const body = `return(${this.expression.compile()})`;
 

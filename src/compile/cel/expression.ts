@@ -15,7 +15,8 @@ export default class CELExpression {
 
   public compile(): string {
     let glue = this.operator ? this.operator : '';
-    if (glue === CELOperators.IS || glue === CELOperators.IN) glue = ` ${glue} `;
+    if (glue === CELOperators.IS || glue === CELOperators.IN)
+      glue = ` ${glue} `;
 
     let result = this.operands.map(v => v.compile()).join(glue);
     if (!this.isSimple) result = `(${result})`;

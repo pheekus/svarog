@@ -50,7 +50,7 @@ class Svarog extends Command {
     const output = command.args.output;
     const isVerbose = command.flags.verbose;
     const isOverwriteAllowed = command.flags.force;
-    const isOutputEmpty = !(await promisify(fs.exists)(output))
+    const isOutputEmpty = !(await promisify(fs.exists)(output));
 
     if (isVerbose) {
       this.log(`Svarog v${packageVersion}`);
@@ -63,9 +63,7 @@ class Svarog extends Command {
       this.log(`Found ${files.length} file${files.length > 1 ? 's' : ''}`);
     }
 
-    const results: string[] = [
-      `// <svarog version="${packageVersion}">\n`
-    ];
+    const results: string[] = [`// <svarog version="${packageVersion}">\n`];
 
     for (const file of files) {
       if (isVerbose) this.log(`Processing ${file}`);
@@ -78,16 +76,17 @@ class Svarog extends Command {
       results.push(result);
     }
 
-    results.push('\n// </svarog>')
+    results.push('\n// </svarog>');
 
     const rules = results.join('');
 
     if (output && isOutputEmpty) {
       if (isVerbose) this.log(`Creating ${output}`);
       await promisify(fs.writeFile)(output, rules);
-
     } else if (output && !isOutputEmpty) {
-      const outputContent = await promisify(fs.readFile)(output, { encoding: 'utf-8' });
+      const outputContent = await promisify(fs.readFile)(output, {
+        encoding: 'utf-8'
+      });
       const svarogRegex = /\/\/\s<svarog version="(\d)\.(\d)\.(\d)">\n(.*)\n\/\/\s<\/svarog>/gm;
       const svarogInfo = svarogRegex.exec(outputContent);
 
@@ -95,10 +94,12 @@ class Svarog extends Command {
         if (isVerbose) this.log(`Appending Svarog to ${output}`);
         await promisify(fs.writeFile)(output, `${outputContent}\n\n${rules}`);
       } else {
-        const oldVersion = svarogInfo.slice(1, 4).join('.')
+        const oldVersion = svarogInfo.slice(1, 4).join('.');
         const oldMajorVersion = parseInt(svarogInfo[1], 10);
         const newMajorVersion = parseInt(packageVersion.split('.')[0], 10);
-        const canOverwrite = (oldVersion === packageVersion) || (oldMajorVersion === newMajorVersion && oldMajorVersion > 0);
+        const canOverwrite =
+          oldVersion === packageVersion ||
+          (oldMajorVersion === newMajorVersion && oldMajorVersion > 0);
 
         if (canOverwrite || isOverwriteAllowed) {
           if (isVerbose) this.log(`Updating Svarog in ${output}`);
@@ -110,7 +111,7 @@ class Svarog extends Command {
             Output file contains a different major or pre-release version of Svarog,
             and replacing it might break your configuration. If you know what you're doing,
             please use --force flag next time.
-          `)
+          `);
         }
       }
     } else {
