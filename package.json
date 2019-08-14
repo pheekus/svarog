@@ -1,7 +1,7 @@
 {
   "name": "svarog",
   "description": "Generates Cloud Firestore helper functions for schema validation using JSON Schema.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": "Daniil Bratukhin <dantothefuture@gmail.com>",
   "bin": {
     "svarog": "./bin/run"
@@ -12,6 +12,7 @@
     "@oclif/config": "^1.13.2",
     "@oclif/plugin-help": "^2.2.0",
     "glob": "^7.1.4",
+    "outdent": "^0.7.0",
     "tslib": "^1.10.0"
   },
   "devDependencies": {

@@ -3,6 +3,8 @@ import {
   CELAccessor,
   CELExpression,
   CELExpressionOperand,
+  CELFunctionCall,
+  CELList,
   CELLiteral,
   CELOperators
 } from '../cel';
@@ -10,6 +12,7 @@ import compileType from './index';
 
 export default function(
   accessor: CELAccessor,
+  strict: CELAccessor,
   type: JSONSchema7TypeName,
   definition: JSONSchema7
 ): CELExpression | null {
@@ -22,14 +25,27 @@ export default function(
   ).map((property: string) =>
     compileType(
       new CELAccessor(...accessor.path, property),
+      strict,
       (definition.properties as any)[property] as JSONSchema7,
       required.includes(property)
     )
   );
 
-  if (operands.length === 0) {
-    operands.push(new CELLiteral(true));
-  }
+  // => accessor.keys().hasOnly(allowedKeys)
+
+  const allowedKeys = Object.keys(definition.properties as any).map(
+    v => new CELLiteral(v)
+  );
+
+  operands.unshift(
+    new CELFunctionCall(
+      new CELAccessor(
+        new CELFunctionCall(new CELAccessor(...accessor.path, 'keys')),
+        'hasOnly'
+      ),
+      new CELList(...allowedKeys)
+    )
+  );
 
   return new CELExpression(operands, CELOperators.AND);
 }

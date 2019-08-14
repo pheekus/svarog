@@ -12,6 +12,7 @@ import compileType from './index';
 
 export default function(
   accessor: CELAccessor,
+  strict: CELAccessor,
   type: JSONSchema7TypeName,
   definition: JSONSchema7
 ): CELExpression | null {
@@ -80,6 +81,7 @@ export default function(
       ...definition.items.map((nestedDefinition, index) => {
         return compileType(
           new CELAccessor(...accessor.path, `[${index}]`),
+          strict,
           nestedDefinition as JSONSchema7,
           true
         );

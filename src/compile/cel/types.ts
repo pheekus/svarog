@@ -10,7 +10,7 @@ export enum CELGlobals {
   STRING = 'string',
   BOOLEAN = 'bool',
   INTEGER = 'int',
-  FLOAT = 'double',
+  FLOAT = 'float',
   LIST = 'list'
 }
 
@@ -18,6 +18,7 @@ export enum CELOperators {
   AND = '&&',
   OR = '||',
   IS = 'is',
+  IN = 'in',
   EQUALS = '==',
   GREATER = '>',
   LESS = '<',

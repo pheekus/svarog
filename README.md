@@ -57,8 +57,8 @@ $ svarog --verbose schema.json firestore.rules
 The command above will write the following to the `firestore.rules` file in the current working directory:
 
 ```
-function isAppleValid(d) {
-  return d.color && d.color is string && (d.color == 'green' || d.color == 'red');
+function isAppleValid(d, s) {
+  return (d.color || s) ? (d.color is string && (d.color == 'green' || d.color == 'red')) : true;
 }
 ```
 
@@ -66,9 +66,12 @@ You can then use this function in your Firestore Security Rules like this:
 
 ```
 match /apples/{appleId} {
-  allow create: if isAppleValid(request.resource.data);
+  allow create: if isAppleValid(request.resource.data, true);
+  allow update: if isAppleValid(request.resource.data, false);
 }
 ```
+
+The last argument controls the strict mode when all required properties will be expected to be present in the resource. This is useful for checking partial updates when the patch may be incomplete, but still valid.
 
 # Reference
 
@@ -81,7 +84,7 @@ ARGUMENTS
   OUTPUT  target file where Svarog will output security rule helpers
 
 OPTIONS
-  -f, --force    overwrites the output file if it exists
+  -f, --force    overwrites existing Svarog code unconditionally
   -h, --help     displays this message
   -v, --verbose  enables progress logs during compilation
 ```

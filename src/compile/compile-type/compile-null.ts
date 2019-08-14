@@ -3,6 +3,7 @@ import { CELAccessor, CELExpression, CELLiteral, CELOperators } from '../cel';
 
 export default function(
   accessor: CELAccessor,
+  strict: CELAccessor,
   type: JSONSchema7TypeName,
   definition: JSONSchema7
 ): CELExpression | null {

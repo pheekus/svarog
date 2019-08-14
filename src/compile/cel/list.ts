@@ -13,6 +13,6 @@ export default class CELList {
   }
 
   public compile(): string {
-    return `[ ${this.items.map(v => v.compile()).join(', ')} ]`;
+    return `[${this.items.map(v => v.compile()).join(',')}]`;
   }
 }
