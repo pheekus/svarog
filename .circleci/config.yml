@@ -21,7 +21,7 @@ jobs:
       - run: npm test
       - run: ./node_modules/.bin/nyc report --reporter text-lcov > coverage.lcov
       - codecov/upload:
-          file: coverage.lcov
+          file: ./.nyc_output/*.json
   cache:
     <<: *defaults
     steps:
