@@ -49,7 +49,7 @@
   "repository": "https://github.com/dantothefuture/svarog",
   "scripts": {
     "format": "tslint -c tslint.json 'src/**/*.ts' --fix && prettier --write 'src/**/*.ts'",
-    "posttest": "tslint -p test -t stylish",
+    "posttest": "nyc report --include \"src/**\" --extension .ts --reporter json",
     "prepack": "rm -rf lib && tsc -b",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\""
   },

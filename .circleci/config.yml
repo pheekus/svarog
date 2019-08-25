@@ -19,9 +19,8 @@ jobs:
             - v1-npm-{{checksum ".circleci/config.yml"}}
       - run: npm install
       - run: npm test
-      - run: ./node_modules/.bin/nyc report --reporter text-lcov > coverage.lcov
       - codecov/upload:
-          file: ./.nyc_output/*.json
+          file: ./coverage/coverage-final.json
   cache:
     <<: *defaults
     steps:
