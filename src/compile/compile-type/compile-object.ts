@@ -1,51 +1,45 @@
-import { JSONSchema7, JSONSchema7TypeName } from 'json-schema';
 import {
-  CELAccessor,
-  CELExpression,
-  CELExpressionOperand,
-  CELFunctionCall,
-  CELList,
-  CELLiteral,
-  CELOperators
-} from '../cel';
-import compileType from './index';
+  JSONSchema7,
+  JSONSchema7Definition,
+} from 'json-schema';
 
-export default function(
-  accessor: CELAccessor,
-  strict: CELAccessor,
-  type: JSONSchema7TypeName,
-  definition: JSONSchema7
-): CELExpression | null {
-  if (type !== 'object') return null;
+import cel from '../cel';
+import compile from './';
 
-  const required = definition.required ? definition.required : [];
+export default function(schema: JSONSchema7, ref: string, strictRef: string): string {
+  const properties = schema.properties || {};
+  const requiredProperties = new Set(schema.required || []);
+  const allProperties = Object.keys(properties);
 
-  const operands: CELExpressionOperand[] = Object.keys(
-    definition.properties as any
-  ).map((property: string) =>
-    compileType(
-      new CELAccessor(...accessor.path, property),
-      strict,
-      (definition.properties as any)[property] as JSONSchema7,
-      required.includes(property)
-    )
-  );
+  let guard = cel.calc(ref, 'is', cel.ref('map'));
 
-  // => accessor.keys().hasOnly(allowedKeys)
+  if (allProperties.length > 0) {
+    const expectedKeys = cel.val(allProperties);
+    const actualKeys = cel.ref(cel.call(cel.ref(ref, 'keys')));
 
-  const allowedKeys = Object.keys(definition.properties as any).map(
-    v => new CELLiteral(v)
-  );
+    guard = cel.calc(guard, '&&', cel.call(actualKeys, 'hasOnly', expectedKeys));
+  }
 
-  operands.unshift(
-    new CELFunctionCall(
-      new CELAccessor(
-        new CELFunctionCall(new CELAccessor(...accessor.path, 'keys')),
-        'hasOnly'
-      ),
-      new CELList(...allowedKeys)
-    )
-  );
+  allProperties.forEach(key => {
+    const value = properties[key];
+    if (typeof value !== 'object') return;
 
-  return new CELExpression(operands, CELOperators.AND);
+    const valueRef = cel.ref(ref, key);
+    const valueGuard = compile(value, valueRef, strictRef);
+
+    guard = cel.calc(guard, '&&', valueGuard);
+
+    if (!requiredProperties.has(key)) {
+      const definedOrStrict = cel.calc(strictRef, '||', valueRef);
+      guard = cel.calc(definedOrStrict, '&&', guard);
+    }
+  });
+
+  // TODO: minProperties
+  // TODO: maxProperties
+  // TODO: propertyNames
+  // TODO: dependencies
+  // TODO: patternProperties
+
+  return guard;
 }

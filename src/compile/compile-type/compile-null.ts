@@ -1,21 +1,9 @@
-import { JSONSchema7, JSONSchema7TypeName } from 'json-schema';
-import { CELAccessor, CELExpression, CELLiteral, CELOperators } from '../cel';
+import {
+  JSONSchema7
+} from 'json-schema';
 
-export default function(
-  accessor: CELAccessor,
-  strict: CELAccessor,
-  type: JSONSchema7TypeName,
-  definition: JSONSchema7
-): CELExpression | null {
-  if (type !== 'null') return null;
+import cel from '../cel';
 
-  const expression = new CELExpression([], CELOperators.AND);
-
-  // => (accessor is bool)
-
-  expression.operands.push(
-    new CELExpression([accessor, new CELLiteral(null)], CELOperators.EQUALS)
-  );
-
-  return expression;
+export default function(schema: JSONSchema7, ref: string): string {
+  return cel.calc(ref, 'is', cel.val(null));
 }

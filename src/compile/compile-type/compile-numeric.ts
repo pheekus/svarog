@@ -1,109 +1,37 @@
-import { JSONSchema7, JSONSchema7TypeName } from 'json-schema';
 import {
-  CELAccessor,
-  CELExpression,
-  CELFunctionCall,
-  CELGlobal,
-  CELGlobals,
-  CELLiteral,
-  CELOperators
-} from '../cel';
+  JSONSchema7,
+  JSONSchema7Definition,
+} from 'json-schema';
 
-export default function(
-  accessor: CELAccessor,
-  strict: CELAccessor,
-  type: JSONSchema7TypeName,
-  definition: JSONSchema7
-): CELExpression | null {
-  if (type !== 'number' && type !== 'integer') return null;
+import cel from '../cel';
 
-  const expression = new CELExpression([], CELOperators.AND);
+export default function(schema: JSONSchema7, ref: string): string {
+  let guard = cel.calc(ref, 'is', 'int');
 
-  // => ((accessor is int) || (accessor is double))
+  const type = Array.isArray(schema.type) ? schema.type : [schema.type];
+  if (type.includes('number')) guard = cel.calc(guard, '||', cel.calc(ref, 'is', 'double'));
 
-  if (type === 'number') {
-    expression.operands.push(
-      new CELExpression(
-        [
-          new CELExpression(
-            [accessor, new CELGlobal(CELGlobals.INTEGER)],
-            CELOperators.IS
-          ),
-          new CELExpression(
-            [accessor, new CELGlobal(CELGlobals.FLOAT)],
-            CELOperators.IS
-          )
-        ],
-        CELOperators.OR
-      )
-    );
+  if (typeof schema.minimum === 'number') {
+    const minGuard = cel.calc(ref, '>=', cel.val(schema.minimum));
+    guard = cel.calc(guard, '&&', minGuard);
   }
 
-  // => (accessor is int)
-
-  if (type === 'integer') {
-    expression.operands.push(
-      new CELExpression(
-        [accessor, new CELGlobal(CELGlobals.INTEGER)],
-        CELOperators.IS
-      )
-    );
+  if (typeof schema.exclusiveMinimum === 'number') {
+    const exMinGuard = cel.calc(ref, '>', cel.val(schema.exclusiveMinimum));
+    guard = cel.calc(guard, '&&', exMinGuard);
   }
 
-  // => (accessor >= definition.minumum)
-
-  if (typeof definition.minimum === 'number') {
-    expression.operands.push(
-      new CELExpression(
-        [accessor, new CELLiteral(definition.minimum)],
-        CELOperators.GREATER_OR_EQUALS
-      )
-    );
+  if (typeof schema.maximum === 'number') {
+    const maxGuard = cel.calc(ref, '<=', cel.val(schema.maximum));
+    guard = cel.calc(guard, '&&', maxGuard);
   }
 
-  // => (accessor > definition.exclusiveMinimum)
-
-  if (typeof definition.exclusiveMinimum === 'number') {
-    expression.operands.push(
-      new CELExpression(
-        [accessor, new CELLiteral(definition.exclusiveMinimum)],
-        CELOperators.GREATER
-      )
-    );
+  if (typeof schema.exclusiveMaximum === 'number') {
+    const exMaxGuard = cel.calc(ref, '<', cel.val(schema.exclusiveMaximum));
+    guard = cel.calc(guard, '&&', exMaxGuard);
   }
 
-  // => (accessor <= definition.maximum)
+  // TODO: multipleOf
 
-  if (typeof definition.maximum === 'number') {
-    expression.operands.push(
-      new CELExpression(
-        [accessor, new CELLiteral(definition.maximum)],
-        CELOperators.LESS_OR_EQUALS
-      )
-    );
-  }
-
-  // => (accessor < definition.exclusiveMaximum)
-
-  if (typeof definition.exclusiveMaximum === 'number') {
-    expression.operands.push(
-      new CELExpression(
-        [accessor, new CELLiteral(definition.exclusiveMaximum)],
-        CELOperators.LESS
-      )
-    );
-  }
-
-  // => (accessor == definition.const)
-
-  if (typeof definition.const === 'number') {
-    expression.operands.push(
-      new CELExpression(
-        [accessor, new CELLiteral(definition.const)],
-        CELOperators.EQUALS
-      )
-    );
-  }
-
-  return expression;
+  return guard;
 }

@@ -1,60 +1,47 @@
-import { JSONSchema7, JSONSchema7TypeName } from 'json-schema';
 import {
-  CELAccessor,
-  CELCondition,
-  CELExpression,
-  CELExpressionOperand,
-  CELLiteral,
-  CELOperators
-} from '../cel';
+  JSONSchema7TypeName,
+  JSONSchema7,
+} from 'json-schema';
+
+import cel from '../cel';
 
 import compileArray from './compile-array';
 import compileBoolean from './compile-boolean';
+import compileGeneric from './compile-generic';
 import compileNull from './compile-null';
 import compileNumeric from './compile-numeric';
-import compileObject from './compile-object';
 import compileString from './compile-string';
+import compileObject from './compile-object';
 
-const compilers = [
-  compileBoolean,
-  compileNull,
-  compileNumeric,
-  compileString,
-  compileArray,
-  compileObject
-];
+export type Compiler = (
+  schema: JSONSchema7,
+  ref: string,
+  strictRef: string,
+) => string;
 
-export default function(
-  accessor: CELAccessor,
-  strict: CELAccessor,
-  definition: JSONSchema7,
-  isRequired: boolean | null
-): CELExpressionOperand {
-  const expression = new CELExpression([], CELOperators.OR);
-  const types = Array.isArray(definition.type)
-    ? definition.type
-    : ([definition.type] as JSONSchema7TypeName[]);
+function getCompiler(type: JSONSchema7TypeName): Compiler {
+  let compiler = compileGeneric;
 
-  for (const typeName of types) {
-    for (const compiler of compilers) {
-      const celOrNull = compiler(accessor, strict, typeName, definition);
-      if (celOrNull) expression.operands.push(celOrNull);
-    }
-  }
+  if (type === 'array') compiler = compileArray;
+  if (type === 'boolean') compiler = compileBoolean;
+  if (type === 'null') compiler = compileNull;
+  if (type === 'integer' || type === 'number') compiler = compileNumeric;
+  if (type === 'string') compiler = compileString;
+  if (type === 'object') compiler = compileObject;
 
-  // REQUIRED => accessor || strict ? isPropValid : true
-  // OPTIONAL => accessor ? isPropValid : true
+  if (compiler === compileGeneric) return compiler;
 
-  if (isRequired === null) {
-    return expression;
-  } else {
-    return new CELCondition(
-      new CELExpression(
-        isRequired ? [accessor, strict] : [accessor],
-        CELOperators.OR
-      ),
-      expression,
-      new CELLiteral(true)
-    );
-  }
+  return (...args) => cel.calc(compileGeneric(...args), '&&', compiler(...args));
+}
+
+function normalizeTypes(type?: JSONSchema7TypeName|JSONSchema7TypeName[]): JSONSchema7TypeName[] {
+  if (typeof type === 'string') return [type];
+  if (Array.isArray(type)) return type;
+  return [];
+}
+
+export default function(schema: JSONSchema7, ref: string, strictRef: string) {
+  return normalizeTypes(schema.type).reduce((guard, type) => {
+    return cel.calc(guard, '||', getCompiler(type)(schema, ref, strictRef));
+  }, '');
 }
