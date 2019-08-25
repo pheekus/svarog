@@ -7,9 +7,6 @@ Svarog is a CLI that helps you protect your [Firestore](https://cloud.google.com
 [![Version](https://img.shields.io/npm/v/svarog.svg)](https://npmjs.org/package/svarog)
 [![CircleCI](https://circleci.com/gh/dantothefuture/svarog/tree/master.svg?style=shield)](https://circleci.com/gh/dantothefuture/svarog/tree/master)
 [![Codecov](https://codecov.io/gh/dantothefuture/svarog/branch/master/graph/badge.svg)](https://codecov.io/gh/dantothefuture/svarog)
-[![Downloads/week](https://img.shields.io/npm/dw/svarog.svg)](https://npmjs.org/package/svarog)
-[![License](https://img.shields.io/npm/l/svarog2.svg)](https://github.com/@dantothefuture/svarog/blob/master/package.json)
-
 
 # Warning
 
