@@ -17,7 +17,7 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
     const expectedKeys = cel.val(allProperties);
     const actualKeys = cel.ref(cel.call(cel.ref(ref, 'keys')));
 
-    guard = cel.calc(guard, '&&', cel.call(actualKeys, 'hasOnly', expectedKeys));
+    guard = cel.calc(guard, '&&', cel.call(cel.ref(actualKeys, 'hasOnly'), expectedKeys));
   }
 
   allProperties.forEach(key => {
