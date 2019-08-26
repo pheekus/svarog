@@ -31,8 +31,8 @@ function createEnumGuard(declaration: JSONSchema7Type[], ref: string): string {
 export default function(schema: JSONSchema7, ref: string, strictRef: string) {
   let guard = '';
 
-  if (schema.const) guard = createEnumGuard([schema.const], ref);
-  if (schema.enum) guard = cel.calc(guard, '&&', createEnumGuard(schema.enum, ref));
+  if (typeof schema.const !== 'undefined') guard = createEnumGuard([schema.const], ref);
+  if (typeof schema.enum !== 'undefined') guard = cel.calc(guard, '&&', createEnumGuard(schema.enum, ref));
 
   return guard;
 }
