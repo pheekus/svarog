@@ -1,96 +1,46 @@
-import { JSONSchema7, JSONSchema7TypeName } from 'json-schema';
 import {
-  CELAccessor,
-  CELExpression,
-  CELFunctionCall,
-  CELGlobal,
-  CELGlobals,
-  CELLiteral,
-  CELOperators
-} from '../cel';
-import compileType from './index';
+  JSONSchema7,
+  JSONSchema7Definition,
+} from 'json-schema';
 
-export default function(
-  accessor: CELAccessor,
-  strict: CELAccessor,
-  type: JSONSchema7TypeName,
-  definition: JSONSchema7
-): CELExpression | null {
-  if (type !== 'array') return null;
+import cel from '../cel';
+import compile from './';
 
-  const expression = new CELExpression([], CELOperators.AND);
+export default function(schema: JSONSchema7, ref: string, strictRef: string): string {
+  let guard = cel.calc(ref, 'is', 'list');
 
-  // => (accessor is list)
+  const arraySize = cel.call(cel.ref(ref, 'size'));
 
-  expression.operands.push(
-    new CELExpression(
-      [accessor, new CELGlobal(CELGlobals.LIST)],
-      CELOperators.IS
-    )
-  );
-
-  // => (accessor.size() >= definition.minItems)
-
-  if (typeof definition.minItems === 'number') {
-    expression.operands.push(
-      new CELExpression(
-        [
-          new CELFunctionCall(new CELAccessor(...accessor.path, 'size')),
-          new CELLiteral(definition.minItems)
-        ],
-        CELOperators.GREATER_OR_EQUALS
-      )
-    );
+  if (typeof schema.minItems === 'number') {
+    const greaterOrEqual = cel.calc(arraySize, '>=', cel.val(schema.minItems));
+    guard = cel.calc(guard, '&&', greaterOrEqual);
   }
 
-  // => (accessor.size() <= definition.maxItems)
-
-  if (typeof definition.maxItems === 'number') {
-    expression.operands.push(
-      new CELExpression(
-        [
-          new CELFunctionCall(new CELAccessor(...accessor.path, 'size')),
-          new CELLiteral(definition.maxItems)
-        ],
-        CELOperators.LESS_OR_EQUALS
-      )
-    );
+  if (typeof schema.maxItems === 'number') {
+    const lessOrEqual = cel.calc(arraySize, '<=', cel.val(schema.maxItems));
+    guard = cel.calc(guard, '&&', lessOrEqual);
   }
 
-  // => (accessor.size() == definition.items.length) # if definition.additionalItems === false
-  // => (accessor.size() >= definition.items.length) # otherwise
-  // => # + appropriate validators for each type
+  if (Array.isArray(schema.items)) {
+    const items = schema.items as JSONSchema7Definition[];
+    const equalityOperator = schema.additionalItems ? '>=' : '==';
 
-  if (Array.isArray(definition.items)) {
-    const sizeOperator =
-      definition.additionalItems === false
-        ? CELOperators.EQUALS
-        : CELOperators.GREATER_OR_EQUALS;
+    const sizeGuard = cel.calc(arraySize, equalityOperator, cel.val(items.length));
+    guard = cel.calc(guard, '&&', sizeGuard);
 
-    expression.operands.push(
-      new CELExpression(
-        [
-          new CELFunctionCall(new CELAccessor(...accessor.path, 'size')),
-          new CELLiteral(definition.items.length)
-        ],
-        sizeOperator
-      )
-    );
+    for (let i = 0; i < items.length; ++i) {
+      const item = items[i];
+      const itemRef = cel.ref(ref, i);
 
-    expression.operands.push(
-      ...definition.items.map((nestedDefinition, index) => {
-        return compileType(
-          new CELAccessor(...accessor.path, `[${index}]`),
-          strict,
-          nestedDefinition as JSONSchema7,
-          true
-        );
-      })
-    );
+      let itemGuard = itemRef;
+      if (typeof item === 'object') itemGuard = compile(item, itemRef, strictRef);
+
+      guard = cel.calc(guard, '&&', itemGuard);
+    }
   }
 
   // TODO: list type validation in items and additionalItems
   // TODO: uniqueItems support
 
-  return expression;
+  return guard;
 }

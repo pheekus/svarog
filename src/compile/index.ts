@@ -1,12 +1,15 @@
 import { JSONSchema7 } from 'json-schema';
-import { CELAccessor, CELFunction } from './cel';
+import cel from './cel';
 import compileType from './compile-type';
 
 export default function(schema: JSONSchema7): string {
-  const shortcut = new CELAccessor('d');
-  const strict = new CELAccessor('s');
-  const name = `is${schema.$id}Valid`;
-  const expression = compileType(shortcut, strict, schema, null);
+  if (typeof schema.$id !== 'string') {
+    throw new Error('Schema $id is required to name the validator function');
+  }
 
-  return new CELFunction(name, [shortcut, strict], expression).compile();
+  const dataRef = cel.ref('d');
+  const strictRef = cel.ref('s');
+  const validator = compileType(schema, dataRef, strictRef) || cel.val(true);
+
+  return cel.fn(`is${schema.$id}Valid`, dataRef, strictRef, validator);
 }
