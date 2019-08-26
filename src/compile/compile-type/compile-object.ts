@@ -22,19 +22,22 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
 
   allProperties.forEach(key => {
     const value = properties[key];
-    if (typeof value !== 'object') return;
-
     const valueRef = cel.ref(ref, key);
-    let valueGuard = compile(value, valueRef, strictRef);
 
-    if (requiredProperties.has(key)) {
-      const definedOrStrict = cel.calc(strictRef, '||', valueRef);
-      valueGuard = cel.calc(definedOrStrict, '&&', valueGuard);
-    } else {
-      valueGuard = cel.calc(valueRef, '&&', valueGuard);
+    if (typeof value === 'boolean') {
+      guard = cel.calc(guard, '&&', valueRef);
+    } else if (typeof value === 'object') {
+      let valueGuard = compile(value, valueRef, strictRef);
+
+      if (requiredProperties.has(key)) {
+        const definedOrStrict = cel.calc(strictRef, '||', valueRef);
+        valueGuard = cel.calc(definedOrStrict, '&&', valueGuard);
+      } else {
+        valueGuard = cel.calc(valueRef, '&&', valueGuard);
+      }
+
+      guard = cel.calc(guard, '&&', valueGuard);
     }
-
-    guard = cel.calc(guard, '&&', valueGuard);
   });
 
   // TODO: minProperties
