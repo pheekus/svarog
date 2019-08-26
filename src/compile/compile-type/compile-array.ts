@@ -10,21 +10,18 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
   let guard = cel.calc(ref, 'is', 'list');
 
   const arraySize = cel.call(cel.ref(ref, 'size'));
-  const hasItemsDescriptor = Array.isArray(schema.items);
 
-  if (!hasItemsDescriptor || schema.additionalItems === true) {
-    if (typeof schema.minItems === 'number') {
-      const greaterOrEqual = cel.calc(arraySize, '>=', cel.val(schema.minItems));
-      guard = cel.calc(guard, '&&', greaterOrEqual);
-    }
-
-    if (typeof schema.maxItems === 'number') {
-      const lessOrEqual = cel.calc(arraySize, '<=', cel.val(schema.maxItems));
-      guard = cel.calc(guard, '&&', lessOrEqual);
-    }
+  if (typeof schema.minItems === 'number') {
+    const greaterOrEqual = cel.calc(arraySize, '>=', cel.val(schema.minItems));
+    guard = cel.calc(guard, '&&', greaterOrEqual);
   }
 
-  if (hasItemsDescriptor) {
+  if (typeof schema.maxItems === 'number') {
+    const lessOrEqual = cel.calc(arraySize, '<=', cel.val(schema.maxItems));
+    guard = cel.calc(guard, '&&', lessOrEqual);
+  }
+
+  if (Array.isArray(schema.items)) {
     const items = schema.items as JSONSchema7Definition[];
     const equalityOperator = schema.additionalItems ? '>=' : '==';
 
