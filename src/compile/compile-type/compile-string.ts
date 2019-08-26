@@ -22,15 +22,5 @@ export default function(schema: JSONSchema7, ref: string): string {
     guard = cel.calc(guard, '&&', patternGuard);
   }
 
-  if (Array.isArray(schema.enum)) {
-    const enumGuard = cel.call(cel.ref(cel.val(schema.enum as any), 'hasSome'), `[${ref}]`);
-    guard = cel.calc(guard, '&&', enumGuard);
-  }
-
-  if (typeof schema.const === 'string') {
-    const constGuard = cel.calc(ref, '==', cel.val(schema.const));
-    guard = cel.calc(guard, '&&', constGuard);
-  }
-
   return guard;
 }
