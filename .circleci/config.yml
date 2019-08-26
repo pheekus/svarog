@@ -19,8 +19,9 @@ jobs:
             - v1-npm-{{checksum ".circleci/config.yml"}}
       - run: npm install
       - run: npm test
+      - run: ./node_modules/.bin/nyc report --reporter text-lcov > coverage.lcov
       - codecov/upload:
-          file: ./coverage/coverage-final.json
+          file: coverage.lcov
   cache:
     <<: *defaults
     steps:
@@ -38,7 +39,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
-      - run: npm publish
+      - run: npm run semantic-release || true
 
 workflows:
   version: 2
