@@ -25,14 +25,16 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
     if (typeof value !== 'object') return;
 
     const valueRef = cel.ref(ref, key);
-    const valueGuard = compile(value, valueRef, strictRef);
+    let valueGuard = compile(value, valueRef, strictRef);
+
+    if (requiredProperties.has(key)) {
+      const definedOrStrict = cel.calc(strictRef, '||', valueRef);
+      valueGuard = cel.calc(definedOrStrict, '&&', valueGuard);
+    } else {
+      valueGuard = cel.calc(valueRef, '&&', valueGuard);
+    }
 
     guard = cel.calc(guard, '&&', valueGuard);
-
-    if (!requiredProperties.has(key)) {
-      const definedOrStrict = cel.calc(strictRef, '||', valueRef);
-      guard = cel.calc(definedOrStrict, '&&', guard);
-    }
   });
 
   // TODO: minProperties
