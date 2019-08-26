@@ -5,5 +5,5 @@ import {
 import cel from '../cel';
 
 export default function(schema: JSONSchema7, ref: string): string {
-  return cel.calc(ref, 'is', cel.val(null));
+  return cel.calc(ref, '==', cel.val(null));
 }
