@@ -25,7 +25,8 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
     const items = schema.items as JSONSchema7Definition[];
     const equalityOperator = schema.additionalItems ? '>=' : '==';
 
-    guard = cel.calc(arraySize, equalityOperator, cel.val(items.length));
+    const sizeGuard = cel.calc(arraySize, equalityOperator, cel.val(items.length));
+    guard = cel.calc(guard, '&&', sizeGuard);
 
     for (let i = 0; i < items.length; ++i) {
       const item = items[i];
