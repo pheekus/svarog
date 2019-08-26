@@ -9,7 +9,7 @@ export default function(schema: JSONSchema7): string {
 
   const dataRef = cel.ref('d');
   const strictRef = cel.ref('s');
-  const validator = compileType(schema, dataRef, strictRef);
+  const validator = compileType(schema, dataRef, strictRef) || cel.val(true);
 
   return cel.fn(`is${schema.$id}Valid`, dataRef, strictRef, validator);
 }
