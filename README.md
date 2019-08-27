@@ -1,4 +1,4 @@
-🔥 Svarog 🔥
+Svarog for Firestore
 =======
 
 Svarog is a CLI that helps you protect your [Firestore](https://cloud.google.com/firestore) schema from unwanted mutations. It generates a set of of helper functions based on [JSON Schema](https://json-schema.org) files that you can use in your [Security Rules](https://firebase.google.com/docs/firestore/security/get-started) to validate user input.
@@ -8,23 +8,11 @@ Svarog is a CLI that helps you protect your [Firestore](https://cloud.google.com
 [![CircleCI](https://circleci.com/gh/dantothefuture/svarog/tree/master.svg?style=shield)](https://circleci.com/gh/dantothefuture/svarog/tree/master)
 [![Codecov](https://codecov.io/gh/dantothefuture/svarog/branch/master/graph/badge.svg)](https://codecov.io/gh/dantothefuture/svarog)
 
-# Warning
+## Getting started
 
-This package **is not production-ready** by any means. Just look at the coverage, pal, you don't want that in your enterprise-level project with bright future.
+### Step 1: describe your schema
 
-# Usage
-
-## 🚚 Step 1 - install the package
-
-```bash
-$ npm i -g svarog
-```
-
-You can also install Svarog locally and run it either as `node_modules/.bin/svarog` in your terminal or using the short syntax in the `scripts` section of your `package.json`.
-
-## 📃 Step 2 - describe your schema
-
-Svarog was designed for [JSON Schema 7](https://json-schema.org/draft-07/json-schema-release-notes.html), but chances are that the earlier standards will be compatible with it as well. Here's an example `schema.json` file:
+Svarog was designed to be compatible with [JSON Schema 7](https://json-schema.org/draft-07/json-schema-release-notes.html) - the latest draft of the JSON Schema standard. To get started, create a folder in your project directory, place your schema in a `*.json` file and give it an `$id`:
 
 ```json
 {
@@ -34,68 +22,57 @@ Svarog was designed for [JSON Schema 7](https://json-schema.org/draft-07/json-sc
   "properties": {
     "color": {
       "type": "string",
-      "enum": [ "green", "red" ]
+      "enum": ["green", "red"]
     }
   },
-  "required": [ "color" ]
+  "required": ["color"]
 }
 ```
 
-⚠ **IMPORTANT:** one **valid** schema is expected per file. Support for references is coming soon. Some of the JSON Schema features are not supported.
+You can use any built-in type to describe your database schema. However, you should also keep in mind that not all of the JSON Schema features are [supported](docs/compatibility.md) at the moment.
 
-## ⚡ Step 3 - run Svarog
+#### Using Firestore data types
 
-Svarog is silent by default, and its only required argument is the path to the file containing your schema. You can also pass a [glob](https://www.npmjs.com/package/glob) pattern to process multiple files at once.
+Svarog includes basic support for `Timestamp`, `Bytes`, `LatLng` and `Path` Firestore field types. To enable type checking on such fields, register the appropriate schemas in `definitions` section and then reference them in your main schema with `$ref` like this:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "FirestoreExample",
+  "type": "object",
+  "definitions": {
+    "Timestamp": {},
+  },
+  "properties": {
+    "date": { "$ref": "#/definitions/Timestamp" },
+  }
+}
+```
+
+### Step 2: run Svarog
+
+Once you have your schema ready, install and run Svarog:
 
 ```bash
-$ svarog --verbose schema.json firestore.rules
+$ npm i -g svarog
+$ svarog "schema/*.json" "firestore.rules" --verbose
 ```
 
-The command above will write the following to the `firestore.rules` file in the current working directory:
+The last command will pull every schema in `schema` folder, run the compiler and append a minified code snippet to the `firestore.rules` file. You can run this command every time you update your schema, and it will replace the generated snippet for you automatically if both old and new helpers were created with the compatible versions of CLI.
 
-```
-// <svarog version="1.0.0">
-function _s0(d,s){return ((d is map)&&(((d.color||s)&&(d.color is string))&&((d.color=="green")||(d.color=="red"))))}function _s(n,d,s){return ((n=="Apple")&&_s0(d,s))}function isValid(n){return _s(n,request.resource.data,(request.method=="create"))}
-// </svarog>
-```
+### Step 3: call `isValid()` in Security Rules
 
-That code snippet contains your schema validator and `isValid(schema: string): boolean` function that you can then use in your rules like this:
+The code we generated in the previous step exposes `isValid($id: string): boolean` function that you can use in your Security Rules together with other assertions:
 
 ```
 match /apples/{appleId} {
-  allow write: if isValid("Apple");
+  allow write: isValid("Apple");
 }
 ```
 
 Svarog will apply a *strict* schema check when a document is created (assuring that all required properties are present and nothing out of the schema is added), and a *loose* one on each update (when some properties defined in schema may be missing from the patch object).
 
-### How do I use Firestore-specific types like LatLng?
-
-Svarog includes basic support for `Timestamp`, `Bytes`, `LatLng` and `Path` (type checking only for now). Since these types are not defined in JSON Schema specification, you'll need to define and use them like this:
-
-```json
-{
-  "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "FirestoreTypes",
-  "type": "object",
-  "definitions": {
-    "Timestamp": {},
-    "Bytes": {},
-    "LatLng": {},
-    "Path": {}
-  },
-  "properties": {
-    "date": { "$ref": "#/definitions/Timestamp" },
-    "bytes": { "$ref": "#/definitions/Bytes" },
-    "location": { "$ref": "#/definitions/LatLng" },
-    "document": { "$ref": "#/definitions/Path" }
-  }
-}
-```
-
-If you are worried about performing complex data validations on such fields, remember that you can always combine Svarog's `isValid()` call with your own code.
-
-# Reference
+## CLI reference
 
 ```bash
 USAGE
