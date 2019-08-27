@@ -34,22 +34,22 @@ function createInterface(ref: string, routerRef: string): string {
   return cel.fn(ref, nameRef, cel.call(routerRef, nameRef, dataRef, strictRef));
 }
 
-export type CompilerOptions = {
-  interface: string,
-  router: string,
+export interface ICompilerOptions {
   getGuardName: (schema: JSONSchema7, i: number) => string;
   getSchemaId: (schema: JSONSchema7, i: number) => string;
+  interface: string;
+  router: string;
 }
 
-export const defaultOptions: CompilerOptions = {
-  interface: 'isValid',
-  router: '_s',
+export const defaultOptions: ICompilerOptions = {
   getGuardName: (s, i) => `_s${i}`,
   getSchemaId: (s, i) => s.$id || `Schema${i}`,
+  interface: 'isValid',
+  router: '_s',
 }
 
-export default function(schemas: JSONSchema7[], options: Partial<CompilerOptions> = defaultOptions): string {
-  const compilerOptions: CompilerOptions = Object.assign({}, defaultOptions, options);
+export default function(schemas: JSONSchema7[], options: Partial<ICompilerOptions> = defaultOptions): string {
+  const compilerOptions: ICompilerOptions = Object.assign({}, defaultOptions, options);
   const guards: Map<string, string> = new Map();
   const output: string[] = [];
 

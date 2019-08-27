@@ -1,21 +1,21 @@
 import {
-  JSONSchema7TypeName,
   JSONSchema7,
+  JSONSchema7TypeName,
 } from 'json-schema';
 
 import cel from '../cel';
 
 import compileArray from './compile-array';
 import compileBoolean from './compile-boolean';
+import compileBytes from './compile-bytes';
 import compileGeneric from './compile-generic';
+import compileLatLng from './compile-lat-lng';
 import compileNull from './compile-null';
 import compileNumeric from './compile-numeric';
-import compileString from './compile-string';
 import compileObject from './compile-object';
-import compileTimestamp from './compile-timestamp';
-import compileBytes from './compile-bytes';
-import compileLatLng from './compile-lat-lng';
 import compileReference from './compile-path';
+import compileString from './compile-string';
+import compileTimestamp from './compile-timestamp';
 
 export type Compiler = (
   schema: JSONSchema7,

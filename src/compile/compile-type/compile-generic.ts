@@ -1,7 +1,7 @@
 import {
   JSONSchema7,
-  JSONSchema7Type,
   JSONSchema7Array,
+  JSONSchema7Type,
 } from 'json-schema';
 
 import cel from '../cel';

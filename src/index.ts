@@ -1,7 +1,7 @@
 import { Command, flags } from '@oclif/command';
-import { JSONSchema7 } from 'json-schema';
 import fs from 'fs';
 import glob from 'glob';
+import { JSONSchema7 } from 'json-schema';
 import outdent from 'outdent';
 import { promisify } from 'util';
 import { description as packageDescription } from '../package.json';
