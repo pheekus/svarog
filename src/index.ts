@@ -4,11 +4,10 @@ import fs from 'fs';
 import glob from 'glob';
 import outdent from 'outdent';
 import { promisify } from 'util';
-import {
-  description as packageDescription,
-  version as packageVersion
-} from '../package.json';
+import { description as packageDescription } from '../package.json';
 import compile from './compile';
+
+const packageVersion = '1.0.0';
 
 class Svarog extends Command {
   public static description = packageDescription;
