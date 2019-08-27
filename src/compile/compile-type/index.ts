@@ -1,17 +1,21 @@
 import {
-  JSONSchema7TypeName,
   JSONSchema7,
+  JSONSchema7TypeName,
 } from 'json-schema';
 
 import cel from '../cel';
 
 import compileArray from './compile-array';
 import compileBoolean from './compile-boolean';
+import compileBytes from './compile-bytes';
 import compileGeneric from './compile-generic';
+import compileLatLng from './compile-lat-lng';
 import compileNull from './compile-null';
 import compileNumeric from './compile-numeric';
-import compileString from './compile-string';
 import compileObject from './compile-object';
+import compileReference from './compile-path';
+import compileString from './compile-string';
+import compileTimestamp from './compile-timestamp';
 
 export type Compiler = (
   schema: JSONSchema7,
@@ -41,6 +45,11 @@ function normalizeTypes(type?: JSONSchema7TypeName|JSONSchema7TypeName[]): JSONS
 }
 
 export default function(schema: JSONSchema7, ref: string, strictRef: string) {
+  if (schema.$ref === '#/definitions/Timestamp') return compileTimestamp(schema, ref);
+  if (schema.$ref === '#/definitions/Bytes') return compileBytes(schema, ref);
+  if (schema.$ref === '#/definitions/LatLng') return compileLatLng(schema, ref);
+  if (schema.$ref === '#/definitions/Path') return compileReference(schema, ref);
+
   return normalizeTypes(schema.type).reduce((guard, type) => {
     return cel.calc(guard, '||', getCompiler(type)(schema, ref, strictRef));
   }, '');

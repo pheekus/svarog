@@ -1,13 +1,13 @@
 import { Command, flags } from '@oclif/command';
 import fs from 'fs';
 import glob from 'glob';
+import { JSONSchema7 } from 'json-schema';
 import outdent from 'outdent';
 import { promisify } from 'util';
-import {
-  description as packageDescription,
-  version as packageVersion
-} from '../package.json';
+import { description as packageDescription } from '../package.json';
 import compile from './compile';
+
+const packageVersion = '1.0.0';
 
 class Svarog extends Command {
   public static description = packageDescription;
@@ -63,22 +63,19 @@ class Svarog extends Command {
       this.log(`Found ${files.length} file${files.length > 1 ? 's' : ''}`);
     }
 
-    const results: string[] = [`// <svarog version="${packageVersion}">\n`];
+    const schemas: JSONSchema7[] = [];
 
     for (const file of files) {
-      if (isVerbose) this.log(`Processing ${file}`);
-
-      const data: string = await promisify(fs.readFile)(file, {
-        encoding: 'utf-8'
-      });
-      const result = compile(JSON.parse(data));
-
-      results.push(result);
+      if (isVerbose) this.log(`Reading ${file}`);
+      const data: string = await promisify(fs.readFile)(file, { encoding: 'utf-8' });
+      schemas.push(JSON.parse(data));
     }
 
-    results.push('\n// </svarog>');
-
-    const rules = results.join('');
+    const rules = ([
+      `// <svarog version="${packageVersion}">`,
+      compile(schemas),
+      '// </svarog>'
+    ]).join('\n');
 
     if (output && isOutputEmpty) {
       if (isVerbose) this.log(`Creating ${output}`);

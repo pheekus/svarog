@@ -9,7 +9,7 @@ export default function(schema: JSONSchema7, ref: string): string {
   let guard = cel.calc(ref, 'is', 'int');
 
   const type = Array.isArray(schema.type) ? schema.type : [schema.type];
-  if (type.includes('number')) guard = cel.calc(guard, '||', cel.calc(ref, 'is', 'double'));
+  if (type.includes('number')) guard = cel.calc(guard, '||', cel.calc(ref, 'is', 'float'));
 
   if (typeof schema.minimum === 'number') {
     const minGuard = cel.calc(ref, '>=', cel.val(schema.minimum));
