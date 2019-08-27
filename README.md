@@ -54,21 +54,20 @@ $ svarog --verbose schema.json firestore.rules
 The command above will write the following to the `firestore.rules` file in the current working directory:
 
 ```
-function isAppleValid(d, s) {
-  return (d.color || s) ? (d.color is string && (d.color == 'green' || d.color == 'red')) : true;
-}
+// <svarog version="1.0.0">
+function _s0(d,s){return ((d is map)&&(((d.color||s)&&(d.color is string))&&((d.color=="green")||(d.color=="red"))))}function _s(n,d,s){return ((n=="Apple")&&_s0(d,s))}function isValid(n){return _s(n,request.resource.data,(request.method=="create"))}
+// </svarog>
 ```
 
-You can then use this function in your Firestore Security Rules like this:
+That code snippet contains your schema validator and `isValid(schema: string): boolean` function that you can then use in your rules like this:
 
 ```
 match /apples/{appleId} {
-  allow create: if isAppleValid(request.resource.data, true);
-  allow update: if isAppleValid(request.resource.data, false);
+  allow write: if isValid("Apple");
 }
 ```
 
-The last argument controls the strict mode when all required properties will be expected to be present in the resource. This is useful for checking partial updates when the patch may be incomplete, but still valid.
+Svarog will apply a *strict* schema check when a document is created (assuring that all required properties are present and nothing out of the schema is added), and a *loose* one on each update (when some properties defined in schema may be missing from the patch object).
 
 # Reference
 
