@@ -69,6 +69,32 @@ match /apples/{appleId} {
 
 Svarog will apply a *strict* schema check when a document is created (assuring that all required properties are present and nothing out of the schema is added), and a *loose* one on each update (when some properties defined in schema may be missing from the patch object).
 
+### How do I use Firestore-specific types like LatLng?
+
+Svarog includes basic support for `Timestamp`, `Bytes`, `LatLng` and `Path` (type checking only for now). Since these types are not defined in JSON Schema specification, you'll need to define and use them like this:
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "FirestoreTypes",
+  "type": "object",
+  "definitions": {
+    "Timestamp": {},
+    "Bytes": {},
+    "LatLng": {},
+    "Path": {}
+  },
+  "properties": {
+    "date": { "$ref": "#/definitions/Timestamp" },
+    "bytes": { "$ref": "#/definitions/Bytes" },
+    "location": { "$ref": "#/definitions/LatLng" },
+    "document": { "$ref": "#/definitions/Path" }
+  }
+}
+```
+
+If you are worried about performing complex data validations on such fields, remember that you can always combine Svarog's `isValid()` call with your own code.
+
 # Reference
 
 ```bash
