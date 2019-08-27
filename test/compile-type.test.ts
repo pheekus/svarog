@@ -7,9 +7,49 @@ import compileNull from '../src/compile/compile-type/compile-null';
 import compileNumeric from '../src/compile/compile-type/compile-numeric';
 import compileObject from '../src/compile/compile-type/compile-object';
 import compileString from '../src/compile/compile-type/compile-string';
+import compileTimestamp from '../src/compile/compile-type/compile-timestamp';
+import compileBytes from '../src/compile/compile-type/compile-bytes';
+import compileLatLng from '../src/compile/compile-type/compile-lat-lng';
+import compilePath from '../src/compile/compile-type/compile-path';
 import compileType from '../src/compile/compile-type';
 
 describe('type compilers', () => {
+  describe('firestore.timestamp', () => {
+    it('compiles basic schema', () => {
+      assert.equal(compileTimestamp({
+        definitions: { Timestamp: {}},
+        $ref: '#/definitions/Timestamp'
+      }, 'ref'), '(ref is timestamp)');
+    });
+  });
+
+  describe('firestore.bytes', () => {
+    it('compiles basic schema', () => {
+      assert.equal(compileBytes({
+        definitions: { Bytes: {}},
+        $ref: '#/definitions/Bytes'
+      }, 'ref'), '(ref is bytes)');
+    });
+  });
+
+  describe('firestore.latlng', () => {
+    it('compiles basic schema', () => {
+      assert.equal(compileLatLng({
+        definitions: { LatLng: {}},
+        $ref: '#/definitions/LatLng'
+      }, 'ref'), '(ref is latlng)');
+    });
+  });
+
+  describe('firestore.path', () => {
+    it('compiles basic schema', () => {
+      assert.equal(compilePath({
+        definitions: { Path: {}},
+        $ref: '#/definitions/Path'
+      }, 'ref'), '((ref is map)&&(ref.path is string))');
+    });
+  });
+
   describe('array', () => {
     it('compiles basic schema', () => {
       assert.equal(compileArray({ type: 'array' }, 'ref', 's'), '(ref is list)');
