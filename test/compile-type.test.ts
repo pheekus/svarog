@@ -138,8 +138,8 @@ describe('type compilers', () => {
   describe('numeric', () => {
     it('compiles basic schema', () => {
       assert.equal(compileNumeric({ type: 'integer' }, 'ref'), '(ref is int)');
-      assert.equal(compileNumeric({ type: 'number' }, 'ref'), '((ref is int)||(ref is double))');
-      assert.equal(compileNumeric({ type: ['integer', 'number'] }, 'ref'), '((ref is int)||(ref is double))');
+      assert.equal(compileNumeric({ type: 'number' }, 'ref'), '((ref is int)||(ref is float))');
+      assert.equal(compileNumeric({ type: ['integer', 'number'] }, 'ref'), '((ref is int)||(ref is float))');
     });
 
     it('supports "minimum"', () => {
@@ -149,7 +149,7 @@ describe('type compilers', () => {
       );
       assert.equal(
         compileNumeric({ type: 'number', minimum: 0 }, 'ref'),
-        '(((ref is int)||(ref is double))&&(ref>=0))'
+        '(((ref is int)||(ref is float))&&(ref>=0))'
       );
     });
 
@@ -160,7 +160,7 @@ describe('type compilers', () => {
       );
       assert.equal(
         compileNumeric({ type: 'number', maximum: 0 }, 'ref'),
-        '(((ref is int)||(ref is double))&&(ref<=0))'
+        '(((ref is int)||(ref is float))&&(ref<=0))'
       );
     });
 
@@ -171,7 +171,7 @@ describe('type compilers', () => {
       );
       assert.equal(
         compileNumeric({ type: 'number', exclusiveMinimum: 0 }, 'ref'),
-        '(((ref is int)||(ref is double))&&(ref>0))'
+        '(((ref is int)||(ref is float))&&(ref>0))'
       );
     });
 
@@ -182,7 +182,7 @@ describe('type compilers', () => {
       );
       assert.equal(
         compileNumeric({ type: 'number', exclusiveMaximum: 0 }, 'ref'),
-        '(((ref is int)||(ref is double))&&(ref<0))'
+        '(((ref is int)||(ref is float))&&(ref<0))'
       );
     });
   });
@@ -248,7 +248,7 @@ describe('type compilers', () => {
       assert.equal(compileType({ type: 'boolean' }, 'ref', 's'), '(ref is bool)');
       assert.equal(compileType({ type: 'null' }, 'ref', 's'), '(ref==null)');
       assert.equal(compileType({ type: 'integer' }, 'ref', 's'), '(ref is int)');
-      assert.equal(compileType({ type: 'number' }, 'ref', 's'), '((ref is int)||(ref is double))');
+      assert.equal(compileType({ type: 'number' }, 'ref', 's'), '((ref is int)||(ref is float))');
       assert.equal(compileType({ type: 'string' }, 'ref', 's'), '(ref is string)');
     });
 
