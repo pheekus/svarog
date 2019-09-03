@@ -210,6 +210,13 @@ describe('type compilers', () => {
       );
     });
 
+    it('supports "minProperties"', () => {
+      assert.equal(
+        compileObject({ type: 'object', minProperties: 0 }, 'ref', 's'),
+        '((ref is map)&&(ref.keys().size()>=0))'
+      );
+    });
+
     it('supports "required"', () => {
       assert.equal(
         compileObject({ type: 'object', properties: { a: { type: 'boolean' }}, required: ['a']}, 'ref', 's'),

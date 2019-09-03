@@ -10,13 +10,13 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
   const properties = schema.properties || {};
   const requiredProperties = new Set(schema.required || []);
   const allProperties = Object.keys(properties);
+  const actualKeys = cel.ref(cel.call(cel.ref(ref, 'keys')));
+  const actualKeysSize = cel.call(cel.ref(actualKeys, 'size'));
 
   let guard = cel.calc(ref, 'is', cel.ref('map'));
 
   if (allProperties.length > 0) {
     const expectedKeys = cel.val(allProperties);
-    const actualKeys = cel.ref(cel.call(cel.ref(ref, 'keys')));
-
     guard = cel.calc(guard, '&&', cel.call(cel.ref(actualKeys, 'hasOnly'), expectedKeys));
   }
 
@@ -40,7 +40,11 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
     }
   });
 
-  // TODO: minProperties
+  if (typeof schema.minProperties === 'number') {
+    const minPropertiesGuard = cel.calc(actualKeysSize, '>=', cel.val(schema.minProperties));
+    guard = cel.calc(guard, '&&', minPropertiesGuard);
+  }
+
   // TODO: maxProperties
   // TODO: propertyNames
   // TODO: dependencies
