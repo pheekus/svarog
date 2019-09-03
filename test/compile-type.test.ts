@@ -151,6 +151,13 @@ describe('type compilers', () => {
         '(((ref is int)&&(ref>=0))||((ref is int)&&(ref<=1)))'
       );
     });
+
+    it('supports "not"', () => {
+      assert.equal(
+        compileGeneric({ type: 'integer', not: { minimum: 0 }}, 'ref', 's'),
+        '(((ref is int)&&(ref>=0))==false)'
+      );
+    });
   });
 
   describe('null', () => {

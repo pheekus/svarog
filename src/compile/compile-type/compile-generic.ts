@@ -57,5 +57,11 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string) {
     guard = cel.calc(guard, '&&', anyOfGuard);
   }
 
+  if (typeof schema.not === 'object') {
+    if (!schema.not.hasOwnProperty('type')) schema.not.type = schema.type;
+    const notGuard = cel.calc(compileType(schema.not, 'ref', 's'), '==', cel.val(false));
+    guard = cel.calc(guard, '&&', notGuard);
+  }
+
   return guard;
 }
