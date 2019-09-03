@@ -185,6 +185,13 @@ describe('type compilers', () => {
         '(((ref is int)||(ref is float))&&(ref<0))'
       );
     });
+
+    it('supports "multipleOf"', () => {
+      assert.equal(
+        compileNumeric({ type: 'integer', multipleOf: 2 }, 'ref'),
+        '((ref is int)&&((ref%2)==0))'
+      );
+    });
   });
 
   describe('object', () => {
