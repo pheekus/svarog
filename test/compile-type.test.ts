@@ -139,6 +139,18 @@ describe('type compilers', () => {
         '(((ref is int)&&(ref>=0))&&((ref is int)&&(ref<=1)))'
       );
     });
+
+    it('supports "anyOf"', () => {
+      assert.equal(
+        compileGeneric({ type: 'integer', anyOf: [true, { maximum: 1 }] }, 'ref', 's'),
+        '((ref is int)&&(ref<=1))'
+      );
+
+      assert.equal(
+        compileGeneric({ type: 'integer', anyOf: [{ minimum: 0 }, { maximum: 1 }] }, 'ref', 's'),
+        '(((ref is int)&&(ref>=0))||((ref is int)&&(ref<=1)))'
+      );
+    });
   });
 
   describe('null', () => {

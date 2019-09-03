@@ -46,5 +46,16 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string) {
     guard = cel.calc(guard, '&&', anyOfGuard);
   }
 
+  if (Array.isArray(schema.anyOf)) {
+    const anyOfGuard = schema.anyOf.reduce((partialGuard, variant) => {
+      if (typeof variant === 'boolean') return partialGuard;
+      if (!variant.hasOwnProperty('type')) variant.type = schema.type;
+
+      return cel.calc(partialGuard, '||', compileType(variant, ref, strictRef));
+    }, '');
+
+    guard = cel.calc(guard, '&&', anyOfGuard);
+  }
+
   return guard;
 }
