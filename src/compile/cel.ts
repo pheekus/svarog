@@ -1,4 +1,4 @@
-export type CELOperator = '&&'|'||'|'>'|'<'|'=='|'>='|'<=';
+export type CELOperator = '&&'|'||'|'>'|'<'|'=='|'>='|'<='|'%';
 export type CELKeyword = 'is'|'in';
 export type CELPrimitive = null|number|string|boolean;
 export type CELLiteral = CELPrimitive|CELPrimitive[];
