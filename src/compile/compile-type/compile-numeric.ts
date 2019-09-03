@@ -31,7 +31,10 @@ export default function(schema: JSONSchema7, ref: string): string {
     guard = cel.calc(guard, '&&', exMaxGuard);
   }
 
-  // TODO: multipleOf
+  if (typeof schema.multipleOf === 'number') {
+    const multipleOfGuard = cel.calc(cel.calc(ref, '%', cel.val(schema.multipleOf)), '==', cel.val(0));
+    guard = cel.calc(guard, '&&', multipleOfGuard);
+  }
 
   return guard;
 }

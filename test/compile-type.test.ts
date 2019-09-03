@@ -185,6 +185,13 @@ describe('type compilers', () => {
         '(((ref is int)||(ref is float))&&(ref<0))'
       );
     });
+
+    it('supports "multipleOf"', () => {
+      assert.equal(
+        compileNumeric({ type: 'integer', multipleOf: 2 }, 'ref'),
+        '((ref is int)&&((ref%2)==0))'
+      );
+    });
   });
 
   describe('object', () => {
@@ -200,6 +207,20 @@ describe('type compilers', () => {
       assert.equal(
         compileObject({ type: 'object', properties: { a: { type: 'boolean' }}}, 'ref', 's'),
         '(((ref is map)&&ref.keys().hasOnly(["a"]))&&(ref.a&&(ref.a is bool)))'
+      );
+    });
+
+    it('supports "minProperties"', () => {
+      assert.equal(
+        compileObject({ type: 'object', minProperties: 0 }, 'ref', 's'),
+        '((ref is map)&&(ref.keys().size()>=0))'
+      );
+    });
+
+    it('supports "maxProperties"', () => {
+      assert.equal(
+        compileObject({ type: 'object', maxProperties: 0 }, 'ref', 's'),
+        '((ref is map)&&(ref.keys().size()<=0))'
       );
     });
 

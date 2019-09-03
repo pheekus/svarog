@@ -9,10 +9,7 @@ Features on this list are not currently supported, but planned for the future re
 
 |Type|Features|
 |--|--|
-|`object`|`minProperties`, `maxProperties`, `dependencies`|
-|`string`|`format`|
-|`integer`|`multipleOf`|
-|`number`|`multipleOf`|
+|`object`|`dependencies`|
 |`other`|`allOf`, `$ref`|
 
 ## Under consideration
