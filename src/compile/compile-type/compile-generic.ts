@@ -5,6 +5,7 @@ import {
 } from 'json-schema';
 
 import cel from '../cel';
+import compileType from './';
 
 function createEnumValueGuard(schema: JSONSchema7Type, ref: string): string {
   if (typeof schema === 'object' && schema !== null) {
@@ -33,6 +34,17 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string) {
 
   if (typeof schema.const !== 'undefined') guard = createEnumGuard([schema.const], ref);
   if (typeof schema.enum !== 'undefined') guard = cel.calc(guard, '&&', createEnumGuard(schema.enum, ref));
+
+  if (Array.isArray(schema.allOf)) {
+    const anyOfGuard = schema.allOf.reduce((partialGuard, variant) => {
+      if (typeof variant === 'boolean') return partialGuard;
+      if (!variant.hasOwnProperty('type')) variant.type = schema.type;
+
+      return cel.calc(partialGuard, '&&', compileType(variant, ref, strictRef));
+    }, '');
+
+    guard = cel.calc(guard, '&&', anyOfGuard);
+  }
 
   return guard;
 }
