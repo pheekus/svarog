@@ -66,7 +66,7 @@ The code we generated in the previous step exposes `isValid($id: string): boolea
 
 ```
 match /apples/{appleId} {
-  allow write: isValid("Apple");
+  allow write: if isValid("Apple");
 }
 ```
 
