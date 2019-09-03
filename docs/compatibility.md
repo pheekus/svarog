@@ -11,8 +11,6 @@ Features on this list are not currently supported, but planned for the future re
 |--|--|
 |`object`|`minProperties`, `maxProperties`, `dependencies`|
 |`string`|`format`|
-|`integer`|`multipleOf`|
-|`number`|`multipleOf`|
 |`other`|`allOf`, `$ref`|
 
 ## Under consideration
