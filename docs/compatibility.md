@@ -10,7 +10,7 @@ Features on this list are not currently supported, but planned for the future re
 |Type|Features|
 |--|--|
 |`object`|`dependencies`|
-|`other`|`allOf`, `$ref`|
+|`other`|`$ref`|
 
 ## Under consideration
 
@@ -19,7 +19,7 @@ JSON Schema features listed below may be implemented in future releases, but are
 |Type|Features|
 |--|--|
 |`string`|`format`|
-|`other`|`anyOf`, `oneOf`, `not`, `if`, `then`, `else`|
+|`other`|`oneOf`, `if`, `then`, `else`|
 
 ## Not planned
 
