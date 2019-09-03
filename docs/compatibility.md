@@ -10,7 +10,7 @@ Features on this list are not currently supported, but planned for the future re
 |Type|Features|
 |--|--|
 |`object`|`dependencies`|
-|`other`|`allOf`, `$ref`|
+|`other`|`$ref`|
 
 ## Under consideration
 
