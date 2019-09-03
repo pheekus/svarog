@@ -19,7 +19,7 @@ JSON Schema features listed below may be implemented in future releases, but are
 |Type|Features|
 |--|--|
 |`string`|`format`|
-|`other`|`oneOf`, `not`, `if`, `then`, `else`|
+|`other`|`oneOf`, `if`, `then`, `else`|
 
 ## Not planned
 
