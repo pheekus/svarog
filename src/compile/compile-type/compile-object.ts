@@ -45,7 +45,11 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
     guard = cel.calc(guard, '&&', minPropertiesGuard);
   }
 
-  // TODO: maxProperties
+  if (typeof schema.maxProperties === 'number') {
+    const maxPropertiesGuard = cel.calc(actualKeysSize, '<=', cel.val(schema.maxProperties));
+    guard = cel.calc(guard, '&&', maxPropertiesGuard);
+  }
+
   // TODO: propertyNames
   // TODO: dependencies
   // TODO: patternProperties

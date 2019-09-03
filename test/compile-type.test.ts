@@ -217,6 +217,13 @@ describe('type compilers', () => {
       );
     });
 
+    it('supports "maxProperties"', () => {
+      assert.equal(
+        compileObject({ type: 'object', maxProperties: 0 }, 'ref', 's'),
+        '((ref is map)&&(ref.keys().size()<=0))'
+      );
+    });
+
     it('supports "required"', () => {
       assert.equal(
         compileObject({ type: 'object', properties: { a: { type: 'boolean' }}, required: ['a']}, 'ref', 's'),
