@@ -36,14 +36,14 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string) {
   if (typeof schema.enum !== 'undefined') guard = cel.calc(guard, '&&', createEnumGuard(schema.enum, ref));
 
   if (Array.isArray(schema.allOf)) {
-    const anyOfGuard = schema.allOf.reduce((partialGuard, variant) => {
+    const allOfGuard = schema.allOf.reduce((partialGuard, variant) => {
       if (typeof variant === 'boolean') return partialGuard;
       if (!variant.hasOwnProperty('type')) variant.type = schema.type;
 
       return cel.calc(partialGuard, '&&', compileType(variant, ref, strictRef));
     }, '');
 
-    guard = cel.calc(guard, '&&', anyOfGuard);
+    guard = cel.calc(guard, '&&', allOfGuard);
   }
 
   if (Array.isArray(schema.anyOf)) {
