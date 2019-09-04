@@ -46,7 +46,7 @@ describe('type compilers', () => {
       assert.equal(compilePath({
         definitions: { Path: {}},
         $ref: '#/definitions/Path'
-      }, 'ref'), '((ref is map)&&(ref.path is string))');
+      }, 'ref'), `((ref is map)&&(ref.keys().hasOnly(["path"])&&(ref.path is path)))`);
     });
   });
 
