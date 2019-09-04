@@ -1,0 +1,15 @@
+{
+  "name": "Svarog",
+  "platforms": [
+      "Web",
+      "iOS",
+      "Android"
+  ],
+  "pages": {
+    "docs/compatibility.md": "JSON Schema compatibility"
+  },
+  "related": [
+    "bijoutrouvaille/fireward",
+    "FirebaseExtended/protobuf-rules-gen"
+  ]
+}
