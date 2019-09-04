@@ -5,6 +5,7 @@
       "iOS",
       "Android"
   ],
+  "content": "README.md",
   "pages": {
     "docs/compatibility.md": "JSON Schema compatibility"
   },
