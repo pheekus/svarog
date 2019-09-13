@@ -8,7 +8,7 @@ Svarog is a CLI that helps you protect your [Firestore](https://cloud.google.com
 [![CircleCI](https://circleci.com/gh/dantothefuture/svarog/tree/master.svg?style=shield)](https://circleci.com/gh/dantothefuture/svarog/tree/master)
 [![Codecov](https://codecov.io/gh/dantothefuture/svarog/branch/master/graph/badge.svg)](https://codecov.io/gh/dantothefuture/svarog)
 
-> **Note**: if you are an npm user, please avoid installing versions 0.5.0 to 1.2.4 - there was an issue (#11) with the project config that resulted in empty packages being published to npm.
+> **Note**: if you are an npm user, please avoid installing versions 0.5.0 to 1.2.5 - there was an issue (#11) with the project config that resulted in empty packages being published to npm.
 
 ## Getting started
 
