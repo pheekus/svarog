@@ -38,6 +38,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+      - run: npm run build
       - run: npm run semantic-release || true
 
 workflows:
