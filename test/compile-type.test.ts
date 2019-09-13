@@ -233,11 +233,11 @@ describe('type compilers', () => {
     it('supports "properties"', () => {
       assert.equal(
         compileObject({ type: 'object', properties: { a: true, b: true }}, 'ref', 's'),
-        '((((ref is map)&&ref.keys().hasOnly(["a","b"]))&&ref.a)&&ref.b)'
+        '((((ref is map)&&ref.keys().hasOnly(["a","b"]))&&((ref.keys().hasAll(["a"])==false)||ref.keys().hasAll(["a"])))&&((ref.keys().hasAll(["b"])==false)||ref.keys().hasAll(["b"])))'
       );
       assert.equal(
         compileObject({ type: 'object', properties: { a: { type: 'boolean' }}}, 'ref', 's'),
-        '(((ref is map)&&ref.keys().hasOnly(["a"]))&&(ref.a&&(ref.a is bool)))'
+        '(((ref is map)&&ref.keys().hasOnly(["a"]))&&((ref.keys().hasAll(["a"])==false)||(ref.a is bool)))'
       );
     });
 
@@ -258,7 +258,7 @@ describe('type compilers', () => {
     it('supports "required"', () => {
       assert.equal(
         compileObject({ type: 'object', properties: { a: { type: 'boolean' }}, required: ['a']}, 'ref', 's'),
-        '(((ref is map)&&ref.keys().hasOnly(["a"]))&&((s||ref.keys().hasAll(["a"]))&&(ref.a is bool)))'
+        '(((ref is map)&&ref.keys().hasOnly(["a"]))&&(((s==false)&&(ref.keys().hasAll(["a"])==false))||(ref.a is bool)))'
       );
     });
   });

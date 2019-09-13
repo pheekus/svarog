@@ -24,21 +24,21 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
     const value = properties[key];
     const valueRef = cel.ref(ref, key);
 
-    if (typeof value === 'boolean') {
-      guard = cel.calc(guard, '&&', valueRef);
-    } else if (typeof value === 'object') {
-      let valueGuard = compile(value, valueRef, strictRef);
+    const loose = cel.calc(strictRef, '==', cel.val(false));
+    const includesKey = cel.call(cel.ref(actualKeys, 'hasAll'), cel.val([key]));
+    const doesNotIncludeKey = cel.calc(includesKey, '==', cel.val(false));
 
-      if (requiredProperties.has(key)) {
-        const includesKey = cel.call(cel.ref(actualKeys, 'hasAll'), cel.val([key]))
-        const definedOrStrict = cel.calc(strictRef, '||', includesKey);
-        valueGuard = cel.calc(definedOrStrict, '&&', valueGuard);
-      } else {
-        valueGuard = cel.calc(valueRef, '&&', valueGuard);
-      }
+    const skipAssert = requiredProperties.has(key)
+      ? cel.calc(loose, '&&', doesNotIncludeKey)
+      : doesNotIncludeKey;
 
-      guard = cel.calc(guard, '&&', valueGuard);
-    }
+    const valueGuard = typeof value === 'boolean'
+      ? value
+        ? includesKey
+        : doesNotIncludeKey
+      : compile(value, valueRef, strictRef);
+
+    guard = cel.calc(guard, '&&', cel.calc(skipAssert, '||', valueGuard));
   });
 
   if (typeof schema.minProperties === 'number') {

@@ -30,7 +30,7 @@ describe('function compiler', () => {
     assert.equal(
       compile([{ $id: 'Sample', type: 'object', properties: { a: true }}]),
       [
-        'function _s0(d,s){return (((d is map)&&d.keys().hasOnly(["a"]))&&d.a)}',
+        'function _s0(d,s){return (((d is map)&&d.keys().hasOnly(["a"]))&&((d.keys().hasAll(["a"])==false)||d.keys().hasAll(["a"])))}',
         'function _s(n,d,s){return ((n=="Sample")&&_s0(d,s))}',
         'function isValid(n){return _s(n,request.resource.data,(request.method=="create"))}'
       ].join('')
