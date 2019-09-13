@@ -19,6 +19,7 @@ jobs:
             - v1-npm-{{checksum ".circleci/config.yml"}}
       - run: npm install
       - run: npm run build
+      - run: rm lib/package.json
       - run: ls -lt lib
       - run: npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
       - run: npm publish --dry-run
