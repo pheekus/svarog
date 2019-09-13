@@ -38,7 +38,7 @@
   },
   "files": [
     "/bin",
-    "/lib"
+    "/lib/src"
   ],
   "homepage": "https://github.com/dantothefuture/svarog",
   "keywords": [],
