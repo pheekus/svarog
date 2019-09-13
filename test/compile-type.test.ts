@@ -258,7 +258,7 @@ describe('type compilers', () => {
     it('supports "required"', () => {
       assert.equal(
         compileObject({ type: 'object', properties: { a: { type: 'boolean' }}, required: ['a']}, 'ref', 's'),
-        '(((ref is map)&&ref.keys().hasOnly(["a"]))&&((s||ref.a)&&(ref.a is bool)))'
+        '(((ref is map)&&ref.keys().hasOnly(["a"]))&&((s||ref.keys().hasAll(["a"]))&&(ref.a is bool)))'
       );
     });
   });

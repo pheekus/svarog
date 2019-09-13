@@ -30,7 +30,8 @@ export default function(schema: JSONSchema7, ref: string, strictRef: string): st
       let valueGuard = compile(value, valueRef, strictRef);
 
       if (requiredProperties.has(key)) {
-        const definedOrStrict = cel.calc(strictRef, '||', valueRef);
+        const includesKey = cel.call(cel.ref(actualKeys, 'hasAll'), cel.val([key]))
+        const definedOrStrict = cel.calc(strictRef, '||', includesKey);
         valueGuard = cel.calc(definedOrStrict, '&&', valueGuard);
       } else {
         valueGuard = cel.calc(valueRef, '&&', valueGuard);
