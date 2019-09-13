@@ -3,7 +3,7 @@ import {
   JSONSchema7
 } from 'json-schema';
 
-import compile from '../src/compile';
+import compile from '../src';
 
 describe('function compiler', () => {
   it('compiles empty schema', () => {

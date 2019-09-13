@@ -1,4 +1,4 @@
-import cel from '../src/compile/cel';
+import cel from '../src/cel';
 import assert from 'assert';
 
 describe('cel', () => {

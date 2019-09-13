@@ -1,17 +1,17 @@
 import assert from 'assert';
 
-import compileArray from '../src/compile/compile-type/compile-array';
-import compileBoolean from '../src/compile/compile-type/compile-boolean';
-import compileGeneric from '../src/compile/compile-type/compile-generic';
-import compileNull from '../src/compile/compile-type/compile-null';
-import compileNumeric from '../src/compile/compile-type/compile-numeric';
-import compileObject from '../src/compile/compile-type/compile-object';
-import compileString from '../src/compile/compile-type/compile-string';
-import compileTimestamp from '../src/compile/compile-type/compile-timestamp';
-import compileBytes from '../src/compile/compile-type/compile-bytes';
-import compileLatLng from '../src/compile/compile-type/compile-lat-lng';
-import compilePath from '../src/compile/compile-type/compile-path';
-import compileType from '../src/compile/compile-type';
+import compileArray from '../src/compile-type/compile-array';
+import compileBoolean from '../src/compile-type/compile-boolean';
+import compileGeneric from '../src/compile-type/compile-generic';
+import compileNull from '../src/compile-type/compile-null';
+import compileNumeric from '../src/compile-type/compile-numeric';
+import compileObject from '../src/compile-type/compile-object';
+import compileString from '../src/compile-type/compile-string';
+import compileTimestamp from '../src/compile-type/compile-timestamp';
+import compileBytes from '../src/compile-type/compile-bytes';
+import compileLatLng from '../src/compile-type/compile-lat-lng';
+import compilePath from '../src/compile-type/compile-path';
+import compileType from '../src/compile-type';
 
 describe('type compilers', () => {
   describe('firestore.timestamp', () => {
