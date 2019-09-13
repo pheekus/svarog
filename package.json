@@ -51,7 +51,7 @@
   "scripts": {
     "format": "tslint -c tslint.json 'src/**/*.ts' --fix && prettier --write 'src/**/*.ts'",
     "posttest": "nyc report --include \"src/**\" --extension .ts --reporter json",
-    "build": "tsc -b",
+    "build": "tsc -p tsconfig.json",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "semantic-release": "semantic-release"
   },
