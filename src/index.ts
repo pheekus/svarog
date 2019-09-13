@@ -7,7 +7,7 @@ import { promisify } from 'util';
 import { description as packageDescription } from '../package.json';
 import compile from './compile';
 
-const packageVersion = '1.0.0';
+const generatedCodeVersion = '1.0.0';
 
 class Svarog extends Command {
   public static description = packageDescription;
@@ -53,7 +53,6 @@ class Svarog extends Command {
     const isOutputEmpty = !(await promisify(fs.exists)(output));
 
     if (isVerbose) {
-      this.log(`Svarog v${packageVersion}`);
       this.log(`Resolving paths for ${input}`);
     }
 
@@ -72,7 +71,7 @@ class Svarog extends Command {
     }
 
     const rules = ([
-      `// <svarog version="${packageVersion}">`,
+      `// <svarog version="${generatedCodeVersion}">`,
       compile(schemas),
       '// </svarog>'
     ]).join('\n');
@@ -93,9 +92,9 @@ class Svarog extends Command {
       } else {
         const oldVersion = svarogInfo.slice(1, 4).join('.');
         const oldMajorVersion = parseInt(svarogInfo[1], 10);
-        const newMajorVersion = parseInt(packageVersion.split('.')[0], 10);
+        const newMajorVersion = parseInt(generatedCodeVersion.split('.')[0], 10);
         const canOverwrite =
-          oldVersion === packageVersion ||
+          oldVersion === generatedCodeVersion ||
           (oldMajorVersion === newMajorVersion && oldMajorVersion > 0);
 
         if (canOverwrite || isOverwriteAllowed) {
@@ -105,7 +104,7 @@ class Svarog extends Command {
           await promisify(fs.writeFile)(output, newContent);
         } else {
           this.error(outdent`
-            Output file contains a different major or pre-release version of Svarog,
+            Output file contains a different major or pre-release version of Svarog code,
             and replacing it might break your configuration. If you know what you're doing,
             please use --force flag next time.
           `);
