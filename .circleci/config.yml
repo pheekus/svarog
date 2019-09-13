@@ -20,6 +20,8 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: ls -lt lib
+      - run: npm set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+      - run: npm publish --dry-run
       - run: npm run test
       - codecov/upload:
           file: coverage/coverage-final.json
