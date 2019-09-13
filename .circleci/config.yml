@@ -19,6 +19,7 @@ jobs:
             - v1-npm-{{checksum ".circleci/config.yml"}}
       - run: npm install
       - run: npm run build
+      - run: ls -lt lib
       - run: npm run test
       - codecov/upload:
           file: coverage/coverage-final.json
