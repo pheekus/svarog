@@ -18,6 +18,7 @@ jobs:
             - v1-npm-{{checksum ".circleci/config.yml"}}-{{checksum "package-lock.json"}}
             - v1-npm-{{checksum ".circleci/config.yml"}}
       - run: npm install
+      - run: npm build
       - run: npm test
       - codecov/upload:
           file: coverage/coverage-final.json
