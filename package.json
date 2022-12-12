@@ -31,7 +31,7 @@
     "tslint": "^5.18.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.5.3",
-    "semantic-release": "^17.2.3"
+    "semantic-release": "^19.0.3"
   },
   "engines": {
     "node": ">=8.0.0"
