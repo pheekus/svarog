@@ -1,6 +1,8 @@
 Svarog for Firestore
 =======
 
+🚨 **This project is no longer maintained. With Svarog, I was trying to see if it was possible to create a DB-first service where Firestore would handle the CRUD and the rest of the operations would be carried out in background via Triggers. The conclusion is that a) it's definitely possible and b) you're going to wish you went with the traditional RESTful monolith architecture very soon. It's way too complex for a simple project and way too limited for anything larger than a TODO app. It _was_ fun to build though :) Thanks to everyone who gave it a try!**
+
 Svarog is a CLI that helps you protect your [Firestore](https://cloud.google.com/firestore) schema from unwanted mutations. It generates a set of of helper functions based on [JSON Schema](https://json-schema.org) files that you can use in your [Security Rules](https://firebase.google.com/docs/firestore/security/get-started) to validate user input.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
